@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { version } from '../package.json'
+import { getSettings, applyTheme } from './store/useSettings'
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
 import { Shield, Swords, BarChart3, BookOpen, User } from 'lucide-react'
 import Dashboard from './pages/Dashboard'
@@ -18,6 +19,8 @@ const NAV_ITEMS = [
 ]
 
 function App() {
+  useEffect(() => { applyTheme(getSettings().theme) }, [])
+
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary">
       <div className="fixed top-2 right-3 z-50 text-[9px] text-text-tertiary/40 pointer-events-none">v{version}</div>

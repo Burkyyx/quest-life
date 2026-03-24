@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { LogIn, LogOut, Lock, Check, Search, UserPlus, UserMinus, UserCheck, Users, Trophy, Flame } from 'lucide-react'
+import Settings from './Settings'
 import QuestIcon from '../components/QuestIcon'
 import PixelAvatar, { PixelStar } from '../components/PixelAvatar'
 import { getState, xpForLevel, getTitle } from '../store/useStore'
@@ -12,7 +13,7 @@ import {
 
 export default function Profile() {
   const [state] = useState(getState)
-  const [tab, setTab] = useState('profile') // 'profile' | 'social'
+  const [tab, setTab] = useState('profile') // 'profile' | 'social' | 'settings'
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -30,12 +31,15 @@ export default function Profile() {
       <div className="flex gap-1 bg-bg-card rounded-xl p-1">
         <TabBtn active={tab === 'profile'} onClick={() => setTab('profile')}>Profil</TabBtn>
         <TabBtn active={tab === 'social'} onClick={() => setTab('social')}>Social</TabBtn>
+        <TabBtn active={tab === 'settings'} onClick={() => setTab('settings')}>Réglages</TabBtn>
       </div>
 
       {tab === 'profile' ? (
         <ProfileTab state={state} user={user} loading={loading} setUser={setUser} setLoading={setLoading} />
-      ) : (
+      ) : tab === 'social' ? (
         <SocialTab user={user} loading={loading} />
+      ) : (
+        <Settings />
       )}
     </div>
   )

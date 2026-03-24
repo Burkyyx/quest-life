@@ -21,6 +21,21 @@
   --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
 }
 
+/* Light mode overrides */
+html.light {
+  --color-bg-primary: #f2f2f7;
+  --color-bg-secondary: #f2f2f7;
+  --color-bg-card: #ffffff;
+  --color-bg-card-hover: #f5f5f5;
+  --color-bg-elevated: #e5e5ea;
+  --color-text-primary: #1c1c1e;
+  --color-text-secondary: #636366;
+  --color-text-tertiary: #aeaeb2;
+  --color-border: #c7c7cc;
+  --color-border-light: #d1d1d6;
+  --color-separator: rgba(0,0,0,0.08);
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
