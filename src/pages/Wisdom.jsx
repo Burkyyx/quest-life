@@ -99,6 +99,7 @@ export default function Wisdom() {
   const [loadingExplanation, setLoadingExplanation] = useState(false)
 
   async function openQuote(quote) {
+    setSelectedAuthor(null)
     setSelectedQuote(quote)
     setExplanation(null)
     setLoadingExplanation(true)

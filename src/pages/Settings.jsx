@@ -1,16 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Sun, Moon, RotateCcw, User, Palette, Info, ChevronRight, Check } from 'lucide-react'
 import { getSettings, updateSettings, applyTheme } from '../store/useSettings'
-import { getState } from '../store/useStore'
+import { getState, updateCharacter } from '../store/useStore'
 import { version } from '../../package.json'
-
-function saveName(name) {
-  const s = JSON.parse(localStorage.getItem('quest-life-data') || '{}')
-  if (s.character) {
-    s.character.name = name
-    localStorage.setItem('quest-life-data', JSON.stringify(s))
-  }
-}
 
 export default function Settings() {
   const [currentTheme, setCurrentTheme] = useState(() => getSettings().theme)
@@ -28,7 +20,7 @@ export default function Settings() {
   }
 
   function handleSaveName() {
-    saveName(characterName)
+    updateCharacter({ name: characterName })
     setNameSaved(true)
     setTimeout(() => setNameSaved(false), 2000)
   }
