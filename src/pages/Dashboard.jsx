@@ -216,7 +216,7 @@ export default function Dashboard() {
                 onTouchMove={handleTouchMove}
               >
                 <button
-                  onClick={() => handleToggle(quest.id)}
+                  onClick={e => { e.stopPropagation(); handleToggle(quest.id) }}
                   onTouchStart={e => e.stopPropagation()}
                   className={`w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center flex-shrink-0 transition-all ${
                     done ? 'bg-xp border-xp' : 'border-text-tertiary'
