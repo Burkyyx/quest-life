@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e6a919"/>
+      <stop offset="100%" style="stop-color:#f5d76e"/>
+    </linearGradient>
+  </defs>
+  <path d="M50 5 L90 25 L90 55 Q90 80 50 95 Q10 80 10 55 L10 25 Z" fill="url(#g)" stroke="#1a1932" stroke-width="3"/>
+  <text x="50" y="62" text-anchor="middle" font-size="36" font-weight="bold" fill="#1a1932" font-family="serif">QL</text>
+</svg>

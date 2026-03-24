@@ -1,0 +1,223 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0a0a0a;
+  --color-bg-card: #141414;
+  --color-bg-card-hover: #1c1c1e;
+  --color-bg-elevated: #1c1c1e;
+  --color-accent: #ffffff;
+  --color-accent-dim: #a0a0a0;
+  --color-xp: #34d399;
+  --color-xp-dim: rgba(52, 211, 153, 0.15);
+  --color-health: #f87171;
+  --color-mana: #60a5fa;
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: #86868b;
+  --color-text-tertiary: #48484a;
+  --color-border: #1d1d1f;
+  --color-border-light: #2c2c2e;
+  --color-separator: rgba(255, 255, 255, 0.06);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border-light); border-radius: 2px; }
+
+/* Glass card effect */
+.glass {
+  background: rgba(20, 20, 20, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-separator);
+}
+
+/* Subtle card hover */
+.card-hover {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-1px);
+  background-color: var(--color-bg-card-hover);
+}
+.card-hover:active {
+  transform: scale(0.98);
+}
+
+/* XP bar */
+@keyframes xp-fill {
+  from { width: 0%; }
+}
+.animate-xp-fill {
+  animation: xp-fill 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Quest check animation */
+@keyframes check-pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.animate-check {
+  animation: check-pop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Level up */
+@keyframes level-up-shine {
+  0% { opacity: 0; transform: translateY(10px); }
+  30% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-level-up {
+  animation: level-up-shine 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fade in */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Pill button */
+.pill {
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+/* ===== Liquid Glass Navigation ===== */
+.liquid-glass-nav {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Main glass background — multi-layer blur */
+.liquid-glass-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  z-index: 0;
+}
+
+/* Glass border — subtle refraction edge */
+.liquid-glass-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  /* Inner light edge — simulates glass refraction */
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.02),
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Pointer glow — follows cursor/finger */
+.liquid-glass-glow {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.4s ease;
+  mix-blend-mode: screen;
+}
+
+/* Active pill — slides behind the selected tab */
+.liquid-glass-pill {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.1, 1),
+              width 0.45s cubic-bezier(0.4, 0, 0.1, 1),
+              opacity 0.3s ease;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Active nav item — subtle glow text */
+.liquid-nav-active {
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.15));
+}
+
+/* Touch ripple animation on tap */
+@keyframes liquid-ripple {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0.3; }
+  100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+}
+
+/* Specular highlight sweep — periodic light sweep across the glass */
+@keyframes liquid-sweep {
+  0%, 100% { transform: translateX(-100%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(200%); }
+}
+
+.liquid-glass-nav::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 100%
+  );
+  animation: liquid-sweep 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 4;
+  border-radius: 22px;
+}

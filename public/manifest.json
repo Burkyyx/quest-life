@@ -1,0 +1,16 @@
+{
+  "name": "Quest Life",
+  "short_name": "QuestLife",
+  "description": "Transforme ta vie en RPG - Track tes objectifs quotidiens",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0e17",
+  "theme_color": "#0f0e17",
+  "icons": [
+    {
+      "src": "/shield.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
