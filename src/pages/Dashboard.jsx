@@ -5,13 +5,14 @@ import QuestIcon from '../components/QuestIcon'
 import PixelAvatar, { PixelStar } from '../components/PixelAvatar'
 import { getState, xpForLevel, getTitle, toggleQuest, saveDayHistory, removeQuest, STAT_TYPES } from '../store/useStore'
 import { getDailyQuote } from '../store/quotes'
-import { getCurrentGrade, getNextGrade } from '../store/grades'
+import { getCurrentGrade } from '../store/grades'
 
 export default function Dashboard() {
   const [state, setLocalState] = useState(getState)
   const [levelUp, setLevelUp] = useState(false)
   const [contextMenu, setContextMenu] = useState(null) // { quest, x, y }
   const [pressedId, setPressedId] = useState(null)
+  const [toastXP, setToastXP] = useState(null)
   const longPressTimer = useRef(null)
   const longPressFired = useRef(false)
   const touchStart = useRef(null)
@@ -39,12 +40,18 @@ export default function Dashboard() {
     if (navigator.vibrate) navigator.vibrate(10)
     setPressedId(questId)
     setTimeout(() => setPressedId(null), 280)
+    const wasCompleted = todayCompleted.includes(questId)
+    const quest = state.quests.find(q => q.id === questId)
     const prevLevel = state.character.level
     const newState = toggleQuest(questId)
     setLocalState({ ...newState })
     if (newState.character.level > prevLevel) {
       setLevelUp(true)
       setTimeout(() => setLevelUp(false), 3000)
+    }
+    if (!wasCompleted && quest) {
+      setToastXP(quest.xp)
+      setTimeout(() => setToastXP(null), 1500)
     }
     saveDayHistory()
   }
@@ -95,6 +102,13 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* XP Toast */}
+      {toastXP && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-xp text-black text-[13px] font-bold px-4 py-2 rounded-full shadow-lg animate-fade-in pointer-events-none tabular-nums">
+          +{toastXP} XP
+        </div>
+      )}
+
       {/* Quote */}
       <div className="pt-1 selectable">
         <p className="text-[13px] text-text-secondary leading-relaxed italic">"{quote.text}"</p>
@@ -112,12 +126,17 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-[15px] font-semibold tracking-tight">{state.character.name}</h2>
-              <span className="text-[11px] text-text-secondary bg-bg-elevated px-2 py-0.5 rounded-full font-medium">
-                Niv. {state.character.level}
-              </span>
-            </div>
+            {(() => {
+              const grade = getCurrentGrade(state.character.level)
+              return (
+                <div className="flex items-center gap-2.5">
+                  <h2 className="text-[15px] font-semibold tracking-tight">{state.character.name}</h2>
+                  <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold" style={{ background: grade.pixelColor + '22', color: grade.pixelColor }}>
+                    {grade.name}
+                  </span>
+                </div>
+              )
+            })()}
             <p className="text-[12px] text-text-tertiary mt-0.5">{getTitle(state.character.level)}</p>
             <div className="mt-3">
               <div className="flex justify-between text-[11px] text-text-tertiary mb-1.5">
@@ -151,38 +170,6 @@ export default function Dashboard() {
           </p>
         </div>
       )}
-
-      {/* Grade progress */}
-      {(() => {
-        const grade = getCurrentGrade(state.character.level)
-        const next = getNextGrade(state.character.level)
-        return (
-          <div className="bg-bg-card rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-3 h-3 rounded-full" style={{ background: grade.pixelColor }} />
-            <div className="flex-1 min-w-0">
-              <p className="text-[12px] font-semibold" style={{ color: grade.pixelColor }}>{grade.name}</p>
-              {next ? (
-                <p className="text-[10px] text-text-tertiary mt-0.5">Prochain : {next.name} (Niv. {next.minLevel})</p>
-              ) : (
-                <p className="text-[10px] text-text-tertiary mt-0.5">Grade maximal atteint</p>
-              )}
-            </div>
-            <Link to="/profile" className="text-[10px] text-text-secondary hover:text-text-primary transition-colors flex items-center gap-0.5">
-              Détails <ChevronRight size={12} strokeWidth={1.5} />
-            </Link>
-          </div>
-        )
-      })()}
-
-      {/* Quick stats preview */}
-      <div className="grid grid-cols-3 gap-2">
-        {STAT_TYPES.slice(0, 3).map(s => (
-          <div key={s.id} className="bg-bg-card rounded-xl p-3 text-center">
-            <p className="text-[16px] font-bold tabular-nums" style={{ color: s.color }}>{Math.floor(state.character.stats?.[s.id] || 1)}</p>
-            <p className="text-[9px] text-text-tertiary font-medium mt-0.5">{s.name}</p>
-          </div>
-        ))}
-      </div>
 
       {/* Daily quests */}
       <div>

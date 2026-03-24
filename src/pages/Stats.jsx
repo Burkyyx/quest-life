@@ -62,7 +62,7 @@ export default function Stats() {
                     className="w-full rounded-lg transition-all duration-700"
                     style={{
                       height: `${height}%`, marginTop: `${100 - height}%`,
-                      background: isToday ? '#f5f5f7' : '#2c2c2e',
+                      background: isToday ? 'var(--color-text-primary)' : 'var(--color-border-light)',
                     }}
                   />
                 </div>
