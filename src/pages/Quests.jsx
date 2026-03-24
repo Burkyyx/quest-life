@@ -67,6 +67,7 @@ function QuestsTab({ state, refresh }) {
 
   // Context menu
   const [contextMenu, setContextMenu] = useState(null) // { quest, x, y }
+  const [pressedId, setPressedId] = useState(null)
   const longPressTimer = useRef(null)
   const longPressFired = useRef(false)
   const touchStart = useRef(null) // { x, y }
@@ -91,6 +92,9 @@ function QuestsTab({ state, refresh }) {
   }, [contextMenu])
 
   function handleToggle(questId) {
+    if (navigator.vibrate) navigator.vibrate(10)
+    setPressedId(questId)
+    setTimeout(() => setPressedId(null), 280)
     toggleQuest(questId)
     saveDayHistory()
     refresh()
@@ -338,7 +342,7 @@ function QuestsTab({ state, refresh }) {
                     <div
                       key={quest.id}
                       data-quest-id={quest.id}
-                      className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-200 select-none ${done ? 'bg-xp-dim' : 'bg-bg-card'}`}
+                      className={`flex items-center gap-3 p-3.5 rounded-2xl transition-colors duration-200 select-none ${done ? 'bg-xp-dim' : 'bg-bg-card'} ${pressedId === quest.id ? 'animate-quest-tap' : ''}`}
                       style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
                       onContextMenu={e => openContextMenu(e, quest)}
                       onTouchStart={e => handleTouchStart(e, quest)}
@@ -382,7 +386,7 @@ function QuestsTab({ state, refresh }) {
 
       {/* Edit modal */}
       {editState && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center p-4 bg-black/60 animate-fade-in" onClick={() => setEditState(null)}>
+        <div className="fixed inset-0 z-50 flex items-end justify-center px-4 pt-4 pb-24 bg-black/60 animate-fade-in" onClick={() => setEditState(null)}>
           <div className="bg-bg-elevated rounded-2xl p-5 w-full max-w-md space-y-4" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <span className="text-[14px] font-semibold">Modifier la quête</span>

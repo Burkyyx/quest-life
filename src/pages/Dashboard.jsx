@@ -11,9 +11,11 @@ export default function Dashboard() {
   const [state, setLocalState] = useState(getState)
   const [levelUp, setLevelUp] = useState(false)
   const [contextMenu, setContextMenu] = useState(null) // { quest, x, y }
+  const [pressedId, setPressedId] = useState(null)
   const longPressTimer = useRef(null)
   const longPressFired = useRef(false)
   const touchStart = useRef(null)
+  const isTouching = useRef(false)
 
   const today = new Date().toISOString().split('T')[0]
   const todayCompleted = state.completedQuests[today] || []
@@ -34,6 +36,9 @@ export default function Dashboard() {
   function refresh() { setLocalState({ ...getState() }) }
 
   function handleToggle(questId) {
+    if (navigator.vibrate) navigator.vibrate(10)
+    setPressedId(questId)
+    setTimeout(() => setPressedId(null), 280)
     const prevLevel = state.character.level
     const newState = toggleQuest(questId)
     setLocalState({ ...newState })
@@ -72,7 +77,11 @@ export default function Dashboard() {
   }
   function handleTouchEnd(e, questId) {
     clearTimeout(longPressTimer.current)
-    if (!longPressFired.current && touchStart.current) handleToggle(questId)
+    if (!longPressFired.current && touchStart.current) {
+      isTouching.current = true
+      handleToggle(questId)
+      setTimeout(() => { isTouching.current = false }, 500)
+    }
     touchStart.current = null
   }
 
@@ -196,10 +205,11 @@ export default function Dashboard() {
             return (
               <div
                 key={quest.id}
-                className={`w-full flex items-center gap-3.5 p-3.5 rounded-2xl transition-all duration-200 select-none ${
+                className={`w-full flex items-center gap-3.5 p-3.5 rounded-2xl transition-colors duration-200 select-none ${
                   done ? 'bg-xp-dim' : 'bg-bg-card'
-                }`}
+                } ${pressedId === quest.id ? 'animate-quest-tap' : ''}`}
                 style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+                onClick={() => { if (!isTouching.current) handleToggle(quest.id) }}
                 onContextMenu={e => openContextMenu(e, quest)}
                 onTouchStart={e => handleTouchStart(e, quest)}
                 onTouchEnd={e => handleTouchEnd(e, quest.id)}
