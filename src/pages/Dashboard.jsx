@@ -200,21 +200,24 @@ export default function Dashboard() {
                   done ? 'bg-xp-dim' : 'bg-bg-card'
                 }`}
                 style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
-                onPointerUp={e => { if (e.pointerType === 'mouse') handleToggle(quest.id) }}
                 onContextMenu={e => openContextMenu(e, quest)}
                 onTouchStart={e => handleTouchStart(e, quest)}
                 onTouchEnd={e => handleTouchEnd(e, quest.id)}
                 onTouchMove={handleTouchMove}
               >
-                <div className={`w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center flex-shrink-0 transition-all ${
-                  done ? 'bg-xp border-xp' : 'border-text-tertiary'
-                }`}>
+                <button
+                  onClick={() => handleToggle(quest.id)}
+                  onTouchStart={e => e.stopPropagation()}
+                  className={`w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center flex-shrink-0 transition-all ${
+                    done ? 'bg-xp border-xp' : 'border-text-tertiary'
+                  }`}
+                >
                   {done && (
                     <svg width="10" height="10" viewBox="0 0 12 12" fill="none" className="animate-check">
                       <path d="M2.5 6L5 8.5L9.5 3.5" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   )}
-                </div>
+                </button>
                 <QuestIcon name={quest.icon} size={16} className={done ? 'text-xp' : 'text-text-secondary'} />
                 <span className={`flex-1 text-left text-[13px] ${done ? 'text-text-tertiary line-through' : 'text-text-primary'}`}>
                   {quest.name}
