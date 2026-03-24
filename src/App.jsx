@@ -19,6 +19,7 @@ const NAV_ITEMS = [
 function App() {
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary">
+      <div className="fixed top-2 right-3 z-50 text-[9px] text-text-tertiary/40 select-none pointer-events-none">v1.0.6</div>
       <main className="flex-1 pb-28 px-5 pt-6 max-w-lg mx-auto w-full">
         <Routes>
           <Route path="/" element={<Dashboard />} />
