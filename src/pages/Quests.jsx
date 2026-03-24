@@ -132,6 +132,7 @@ function QuestsTab({ state, refresh }) {
     touchStart.current = { x: touch.clientX, y: touch.clientY }
     longPressTimer.current = setTimeout(() => {
       longPressFired.current = true
+      if (navigator.vibrate) navigator.vibrate(15)
       setContextMenu({ quest, x: touch.clientX, y: touch.clientY })
     }, 550)
   }

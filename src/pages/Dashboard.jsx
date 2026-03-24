@@ -62,6 +62,7 @@ export default function Dashboard() {
     touchStart.current = { x: touch.clientX, y: touch.clientY }
     longPressTimer.current = setTimeout(() => {
       longPressFired.current = true
+      if (navigator.vibrate) navigator.vibrate(15)
       setContextMenu({ quest, x: touch.clientX, y: touch.clientY })
     }, 550)
   }
@@ -95,7 +96,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Quote */}
-      <div className="pt-1">
+      <div className="pt-1 selectable">
         <p className="text-[13px] text-text-secondary leading-relaxed italic">"{quote.text}"</p>
         <p className="text-[11px] text-text-tertiary mt-1.5">— {quote.author}</p>
       </div>
