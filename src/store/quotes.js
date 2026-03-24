@@ -84,7 +84,6 @@ const QUOTES = [
 ]
 
 const WISDOM_THEMES = [
-  { id: 'all', name: 'Tout', icon: 'layers' },
   { id: 'discipline', name: 'Discipline', icon: 'shield' },
   { id: 'courage', name: 'Courage', icon: 'flame' },
   { id: 'sagesse', name: 'Sagesse', icon: 'brain' },

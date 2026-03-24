@@ -88,6 +88,20 @@ const THEME_ICONS = {
   sparkles: Sparkles,
 }
 
+const THEME_COLORS = {
+  discipline: { color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' },
+  courage:    { color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
+  sagesse:    { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)' },
+  résilience: { color: '#10b981', bg: 'rgba(16,185,129,0.12)' },
+  action:     { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
+  temps:      { color: '#06b6d4', bg: 'rgba(6,182,212,0.12)' },
+  liberté:    { color: '#38bdf8', bg: 'rgba(56,189,248,0.12)' },
+  esprit:     { color: '#c084fc', bg: 'rgba(192,132,252,0.12)' },
+  peur:       { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' },
+  gratitude:  { color: '#f472b6', bg: 'rgba(244,114,182,0.12)' },
+  création:   { color: '#fb7185', bg: 'rgba(251,113,133,0.12)' },
+}
+
 export default function Wisdom() {
   const [dailyQuote] = useState(() => getDailyQuote())
   const [randomQuote, setRandomQuote] = useState(null)
@@ -147,19 +161,20 @@ export default function Wisdom() {
       {dailyQuote && (
         <div
           onClick={() => openQuote(dailyQuote)}
-          className="bg-bg-card rounded-2xl p-4 active:bg-bg-card-hover transition-colors cursor-pointer"
+          className="rounded-2xl p-4 cursor-pointer active:opacity-90 transition-opacity overflow-hidden relative"
+          style={{ background: 'linear-gradient(135deg, rgba(167,139,250,0.15) 0%, rgba(59,130,246,0.1) 100%)', border: '1px solid rgba(167,139,250,0.2)' }}
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Quote size={14} className="text-text-tertiary" strokeWidth={1.5} />
-              <span className="text-[11px] text-text-tertiary font-semibold uppercase tracking-[0.08em]">Citation du jour</span>
+              <Quote size={14} style={{ color: '#a78bfa' }} strokeWidth={1.5} />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.08em]" style={{ color: '#a78bfa' }}>Citation du jour</span>
             </div>
             <div className="flex items-center gap-1 text-text-tertiary">
               <Sparkles size={12} strokeWidth={1.5} />
-              <span className="text-[10px]">Expliquer</span>
+              <span className="text-[10px]">IA</span>
             </div>
           </div>
-          <p className="text-[14px] leading-relaxed text-text-primary font-medium">"{dailyQuote.text}"</p>
+          <p className="text-[14px] leading-relaxed text-text-primary font-medium selectable">"{dailyQuote.text}"</p>
           <p className="text-[11px] text-text-tertiary mt-2 font-medium">— {dailyQuote.author}</p>
         </div>
       )}
@@ -171,25 +186,31 @@ export default function Wisdom() {
           className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[12px] font-medium transition-all ${
             activeTheme === 'all'
               ? 'bg-text-primary text-bg-primary'
-              : 'bg-bg-card text-text-secondary hover:text-text-primary'
+              : 'bg-bg-card text-text-secondary'
           }`}
         >
           Tout
         </button>
         {WISDOM_THEMES && WISDOM_THEMES.map(theme => {
           const IconComp = THEME_ICONS[theme.icon]
+          const tc = THEME_COLORS[theme.id]
+          const isActive = activeTheme === theme.id
           return (
             <button
               key={theme.id}
-              onClick={() => { setActiveTheme(theme.id); setShowAll(theme.id !== 'all') }}
-              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium transition-all ${
-                activeTheme === theme.id
-                  ? 'bg-text-primary text-bg-primary'
-                  : 'bg-bg-card text-text-secondary hover:text-text-primary'
-              }`}
+              onClick={() => { setActiveTheme(theme.id); setShowAll(true) }}
+              className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium transition-all"
+              style={isActive && tc ? {
+                background: tc.bg,
+                color: tc.color,
+                border: `1px solid ${tc.color}40`,
+              } : {
+                background: 'var(--color-bg-card)',
+                color: 'var(--color-text-secondary)',
+              }}
             >
               {IconComp && <IconComp size={11} strokeWidth={2} />}
-              {theme.name || theme.label}
+              {theme.name}
             </button>
           )
         })}
@@ -230,21 +251,32 @@ export default function Wisdom() {
         <div className="space-y-1.5">
           {authors.map(author => {
             const info = AUTHOR_INFO[author]
+            const data = AUTHOR_DATA[author]
             const count = QUOTES.filter(q => q.author === author).length
             return (
               <div
                 key={author}
                 onClick={() => setSelectedAuthor(author)}
-                className="flex items-center gap-3 bg-bg-card p-3.5 rounded-xl cursor-pointer active:bg-bg-card-hover transition-colors"
+                className="flex items-center gap-3 bg-bg-card p-3.5 rounded-xl cursor-pointer active:bg-bg-card-hover transition-colors overflow-hidden relative"
               >
-                <div className="rounded-xl bg-bg-elevated w-10 h-10 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                {/* Subtle colored left accent */}
+                {data && (
+                  <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{ background: data.color }} />
+                )}
+                <div
+                  className="rounded-xl w-10 h-10 overflow-hidden flex-shrink-0 flex items-center justify-center"
+                  style={data ? { background: data.color + '20' } : { background: 'var(--color-bg-elevated)' }}
+                >
                   <PixelPhilosopher author={author} size={40} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-semibold truncate">{author}</p>
                   {info && <p className="text-[11px] text-text-tertiary truncate">{info.desc}</p>}
                 </div>
-                <span className="text-[10px] text-text-tertiary bg-bg-elevated px-2 py-0.5 rounded-full font-medium flex-shrink-0">
+                <span
+                  className="text-[10px] px-2 py-0.5 rounded-full font-medium flex-shrink-0"
+                  style={data ? { background: data.color + '20', color: data.color } : { background: 'var(--color-bg-elevated)', color: 'var(--color-text-tertiary)' }}
+                >
                   {count}
                 </span>
                 <ChevronRight size={14} className="text-text-tertiary flex-shrink-0" strokeWidth={1.5} />
@@ -266,21 +298,34 @@ export default function Wisdom() {
           <span className="ml-1 normal-case font-normal">({filtered.length})</span>
         </h3>
         <div className="space-y-1.5">
-          {displayedQuotes.map((quote, i) => (
-            <div
-              key={i}
-              onClick={() => openQuote(quote)}
-              className="bg-bg-card rounded-xl p-4 cursor-pointer active:bg-bg-card-hover transition-colors"
-            >
-              <p className="text-[13px] leading-relaxed text-text-primary">"{quote.text}"</p>
-              <div className="flex items-center justify-between mt-2">
-                <p className="text-[11px] text-text-tertiary font-medium">— {quote.author}</p>
-                <div className="flex items-center gap-1 text-text-tertiary">
-                  <Sparkles size={11} strokeWidth={1.5} />
+          {displayedQuotes.map((quote, i) => {
+            const primaryTheme = quote.themes?.[0]
+            const tc = primaryTheme ? THEME_COLORS[primaryTheme] : null
+            return (
+              <div
+                key={i}
+                onClick={() => openQuote(quote)}
+                className="bg-bg-card rounded-xl p-4 cursor-pointer active:bg-bg-card-hover transition-colors overflow-hidden relative"
+              >
+                {tc && <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{ background: tc.color }} />}
+                <p className="text-[13px] leading-relaxed text-text-primary selectable">"{quote.text}"</p>
+                <div className="flex items-center justify-between mt-2">
+                  <p className="text-[11px] text-text-tertiary font-medium">— {quote.author}</p>
+                  <div className="flex items-center gap-1.5">
+                    {tc && (
+                      <span
+                        className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                        style={{ background: tc.bg, color: tc.color }}
+                      >
+                        {primaryTheme}
+                      </span>
+                    )}
+                    <Sparkles size={11} strokeWidth={1.5} className="text-text-tertiary" />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
         {!showAll && filtered.length > 5 && (
           <button
