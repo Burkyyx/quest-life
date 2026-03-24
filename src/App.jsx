@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { version } from '../package.json'
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
 import { Shield, Swords, BarChart3, BookOpen, User } from 'lucide-react'
 import Dashboard from './pages/Dashboard'
@@ -19,7 +20,7 @@ const NAV_ITEMS = [
 function App() {
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary">
-      <div className="fixed top-2 right-3 z-50 text-[9px] text-text-tertiary/40 select-none pointer-events-none">v1.0.6</div>
+      <div className="fixed top-2 right-3 z-50 text-[9px] text-text-tertiary/40 pointer-events-none">v{version}</div>
       <main className="flex-1 pb-28 px-5 pt-6 max-w-lg mx-auto w-full">
         <Routes>
           <Route path="/" element={<Dashboard />} />
