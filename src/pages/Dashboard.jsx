@@ -132,7 +132,7 @@ export default function Dashboard() {
                 <div className="flex items-center gap-2.5">
                   <h2 className="text-[15px] font-semibold tracking-tight">{state.character.name}</h2>
                   <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold" style={{ background: grade.pixelColor + '22', color: grade.pixelColor }}>
-                    {grade.name}
+                    Niv. {state.character.level}
                   </span>
                 </div>
               )
