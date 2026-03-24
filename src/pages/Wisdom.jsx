@@ -94,6 +94,33 @@ export default function Wisdom() {
   const [activeTheme, setActiveTheme] = useState('all')
   const [showAll, setShowAll] = useState(false)
   const [selectedAuthor, setSelectedAuthor] = useState(null)
+  const [selectedQuote, setSelectedQuote] = useState(null)
+  const [explanation, setExplanation] = useState(null)
+  const [loadingExplanation, setLoadingExplanation] = useState(false)
+
+  async function openQuote(quote) {
+    setSelectedQuote(quote)
+    setExplanation(null)
+    setLoadingExplanation(true)
+    try {
+      const res = await fetch('/api/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quote: quote.text, author: quote.author }),
+      })
+      const data = await res.json()
+      setExplanation(data.explanation ?? data.error ?? 'Erreur inconnue.')
+    } catch {
+      setExplanation('Impossible de charger l\'explication.')
+    } finally {
+      setLoadingExplanation(false)
+    }
+  }
+
+  function closeQuote() {
+    setSelectedQuote(null)
+    setExplanation(null)
+  }
 
   const filtered = activeTheme === 'all'
     ? QUOTES
@@ -117,10 +144,19 @@ export default function Wisdom() {
 
       {/* Daily quote card */}
       {dailyQuote && (
-        <div className="bg-bg-card rounded-2xl p-4 active:bg-bg-card-hover transition-colors cursor-default select-text">
-          <div className="flex items-center gap-2 mb-3">
-            <Quote size={14} className="text-text-tertiary" strokeWidth={1.5} />
-            <span className="text-[11px] text-text-tertiary font-semibold uppercase tracking-[0.08em]">Citation du jour</span>
+        <div
+          onClick={() => openQuote(dailyQuote)}
+          className="bg-bg-card rounded-2xl p-4 active:bg-bg-card-hover transition-colors cursor-pointer"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Quote size={14} className="text-text-tertiary" strokeWidth={1.5} />
+              <span className="text-[11px] text-text-tertiary font-semibold uppercase tracking-[0.08em]">Citation du jour</span>
+            </div>
+            <div className="flex items-center gap-1 text-text-tertiary">
+              <Sparkles size={12} strokeWidth={1.5} />
+              <span className="text-[10px]">Expliquer</span>
+            </div>
           </div>
           <p className="text-[14px] leading-relaxed text-text-primary font-medium">"{dailyQuote.text}"</p>
           <p className="text-[11px] text-text-tertiary mt-2 font-medium">— {dailyQuote.author}</p>
@@ -171,10 +207,17 @@ export default function Wisdom() {
           </button>
         </div>
         {randomQuote ? (
-          <>
+          <div
+            onClick={() => openQuote(randomQuote)}
+            className="cursor-pointer active:opacity-70 transition-opacity"
+          >
             <p className="text-[13px] leading-relaxed text-text-primary">"{randomQuote.text}"</p>
             <p className="text-[11px] text-text-tertiary mt-2 font-medium">— {randomQuote.author}</p>
-          </>
+            <div className="flex items-center gap-1 text-text-tertiary mt-2">
+              <Sparkles size={11} strokeWidth={1.5} />
+              <span className="text-[10px]">Appuie pour l'explication IA</span>
+            </div>
+          </div>
         ) : (
           <p className="text-[12px] text-text-tertiary">Appuie sur "Nouvelle" pour découvrir une citation.</p>
         )}
@@ -223,9 +266,18 @@ export default function Wisdom() {
         </h3>
         <div className="space-y-1.5">
           {displayedQuotes.map((quote, i) => (
-            <div key={i} className="bg-bg-card rounded-xl p-4">
+            <div
+              key={i}
+              onClick={() => openQuote(quote)}
+              className="bg-bg-card rounded-xl p-4 cursor-pointer active:bg-bg-card-hover transition-colors"
+            >
               <p className="text-[13px] leading-relaxed text-text-primary">"{quote.text}"</p>
-              <p className="text-[11px] text-text-tertiary mt-2 font-medium">— {quote.author}</p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-[11px] text-text-tertiary font-medium">— {quote.author}</p>
+                <div className="flex items-center gap-1 text-text-tertiary">
+                  <Sparkles size={11} strokeWidth={1.5} />
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -238,6 +290,55 @@ export default function Wisdom() {
           </button>
         )}
       </div>
+
+      {/* Quote explanation modal */}
+      {selectedQuote && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 flex items-end animate-fade-in"
+          onClick={closeQuote}
+        >
+          <div
+            className="bg-bg-elevated rounded-t-3xl w-full max-h-[80vh] overflow-y-auto pb-10"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="p-5 space-y-4">
+              {/* Handle bar */}
+              <div className="w-10 h-1 bg-bg-card rounded-full mx-auto" />
+
+              {/* Quote */}
+              <div className="bg-bg-card rounded-xl p-4">
+                <p className="text-[14px] leading-relaxed text-text-primary font-medium">"{selectedQuote.text}"</p>
+                <p className="text-[11px] text-text-tertiary mt-2 font-medium">— {selectedQuote.author}</p>
+              </div>
+
+              {/* AI Explanation */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles size={14} className="text-text-tertiary" strokeWidth={1.5} />
+                  <span className="text-[11px] text-text-tertiary font-semibold uppercase tracking-[0.08em]">Explication par IA</span>
+                </div>
+                {loadingExplanation ? (
+                  <div className="space-y-2">
+                    <div className="h-3 bg-bg-card rounded-full animate-pulse w-full" />
+                    <div className="h-3 bg-bg-card rounded-full animate-pulse w-4/5" />
+                    <div className="h-3 bg-bg-card rounded-full animate-pulse w-full" />
+                    <div className="h-3 bg-bg-card rounded-full animate-pulse w-3/5" />
+                  </div>
+                ) : (
+                  <p className="text-[13px] leading-relaxed text-text-secondary">{explanation}</p>
+                )}
+              </div>
+
+              <button
+                onClick={closeQuote}
+                className="w-full py-3 text-[13px] font-medium text-text-secondary bg-bg-card rounded-xl active:bg-bg-card-hover transition-colors"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Author detail modal */}
       {selectedAuthor && (
@@ -312,8 +413,16 @@ export default function Wisdom() {
                 </p>
                 <div className="space-y-2">
                   {QUOTES.filter(q => q.author === selectedAuthor).map((quote, i) => (
-                    <div key={i} className="bg-bg-card rounded-xl p-4">
+                    <div
+                      key={i}
+                      onClick={() => openQuote(quote)}
+                      className="bg-bg-card rounded-xl p-4 cursor-pointer active:bg-bg-card-hover transition-colors"
+                    >
                       <p className="text-[13px] leading-relaxed text-text-primary">"{quote.text}"</p>
+                      <div className="flex items-center gap-1 text-text-tertiary mt-2">
+                        <Sparkles size={11} strokeWidth={1.5} />
+                        <span className="text-[10px]">Explication IA</span>
+                      </div>
                     </div>
                   ))}
                 </div>
